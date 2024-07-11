@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
@@ -19,25 +22,25 @@ export class UserService {
       id: 3,
       name: 'name3',
       email: 'email3',
-      role: 'ENTERN',
+      role: 'ADMIN',
     },
     {
       id: 4,
       name: 'name4',
       email: 'email4',
-      role: 'ENTERN',
+      role: 'ADMIN',
     },
     {
       id: 5,
       name: 'name5',
       email: 'email5',
-      role: 'ENTERN',
+      role: 'ENGINEER',
     },
     {
       id: 6,
       name: 'name6',
       email: 'email6',
-      role: 'ENTERN',
+      role: 'ENGINEER',
     },
   ];
 
@@ -45,7 +48,10 @@ export class UserService {
 
   findAll(role?: 'ENTERN' | 'ENGINEER' | 'ADMIN') {
     if (role) {
-      return this.users.filter((user) => user.role === role);
+      const rolesArray = this.users.filter((user) => user.role === role);
+      if (!rolesArray.length)
+        throw new NotFoundException('user role not found');
+      return rolesArray;
     }
 
     return this.users;
@@ -53,33 +59,23 @@ export class UserService {
 
   findOne(id: number) {
     const user = this.users.find((user) => user.id === id);
+    if (!user) throw new NotFoundException('user not found');
     return user;
   }
 
-  create(user: {
-    name: string;
-    email: string;
-    role: 'ENTERN' | 'ENGINEER' | 'ADMIN';
-  }) {
+  create(createUserDto: CreateUserDto) {
     const userByHighestId = [...this.users].sort((a, b) => b.id - a.id);
 
     const newUser = {
       id: userByHighestId[0].id + 1,
-      ...user,
+      ...createUserDto,
     };
 
     this.users.push(newUser);
     return newUser;
   }
 
-  update(
-    id: number,
-    updatedUser: {
-      name?: string;
-      email?: string;
-      role?: 'ENTERN' | 'ENGINEER' | 'ADMIN';
-    },
-  ) {
+  update(id: number, updatedUser: UpdateUserDto) {
     this.users = this.users.map((user) => {
       if (user.id === id) {
         return { ...user, ...updatedUser };
