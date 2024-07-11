@@ -27,6 +27,18 @@ export class UserService {
       email: 'email4',
       role: 'ENTERN',
     },
+    {
+      id: 5,
+      name: 'name5',
+      email: 'email5',
+      role: 'ENTERN',
+    },
+    {
+      id: 6,
+      name: 'name6',
+      email: 'email6',
+      role: 'ENTERN',
+    },
   ];
 
   // we will create a methods for userController
@@ -49,10 +61,10 @@ export class UserService {
     email: string;
     role: 'ENTERN' | 'ENGINEER' | 'ADMIN';
   }) {
-    userByHighestId = [...this.users].sort((a, b) => (a.id = b.id));
+    const userByHighestId = [...this.users].sort((a, b) => b.id - a.id);
 
     const newUser = {
-      id: userByHighestId[0] + 1,
+      id: userByHighestId[0].id + 1,
       ...user,
     };
 
@@ -70,7 +82,7 @@ export class UserService {
   ) {
     this.users = this.users.map((user) => {
       if (user.id === id) {
-        return [...user, ...updatedUser];
+        return { ...user, ...updatedUser };
       }
       return user;
     });
