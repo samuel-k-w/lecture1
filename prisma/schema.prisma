@@ -13,3 +13,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 // prisma extension
+// for first time use => npx prisma migrate dev|push|publish --name init
+model Employee {
+  id Int @default(autoincrement())
+  name String
+  email String @unique
+  role Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  INTERN
+  ENGINEER
+  ADMIN
+}
